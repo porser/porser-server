@@ -1,0 +1,70 @@
+{
+  "name": "porser-server",
+  "version": "0.1.0",
+  "repository": "git@github.com:porser/porser-server.git",
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Mostafa Shamsitabar",
+      "email": "mostafa.sh.coderino@gmail.com",
+      "url": "https://mimsh.in"
+    }
+  ],
+  "scripts": {
+    "build-ts": "tsc",
+    "build": "npm run build-ts && npm run lint",
+    "debug": "npm run build && npm run watch-debug",
+    "lint": "tsc --project tsconfig.json --noEmit && eslint \"src/**/*.{js,ts}\" --config .eslintrc.js --quiet --fix",
+    "serve-debug": "NODE_PATH=dist/ nodemon --inspect dist/index.js",
+    "serve": "NODE_PATH=dist/ NODE_ENV=production node dist/index.js",
+    "start": "npm run serve",
+    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
+    "watch-node": "NODE_PATH=dist/ nodemon dist/index.js",
+    "watch-ts": "tsc -w",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/compression": "^1.7.2",
+    "@types/cors": "^2.8.12",
+    "@types/nedb": "^1.8.12",
+    "@types/nodemailer": "^6.4.4",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "concurrently": "^6.3.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.2",
+    "husky": ">=6",
+    "lint-staged": ">=10",
+    "nodemon": "^2.0.13",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@feathersjs/authentication": "^4.5.11",
+    "@feathersjs/authentication-local": "^4.5.11",
+    "@feathersjs/authentication-oauth": "^4.5.11",
+    "@feathersjs/configuration": "^4.5.11",
+    "@feathersjs/errors": "^4.5.11",
+    "@feathersjs/express": "^4.5.11",
+    "@feathersjs/feathers": "^4.5.11",
+    "@feathersjs/socketio": "^4.5.11",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "feathers-nedb": "^5.1.0",
+    "helmet": "^4.6.0",
+    "nedb": "^1.8.0",
+    "nodemailer": "^6.7.0",
+    "winston": "^3.3.3"
+  },
+  "lint-staged": {
+    "*.{js,ts,json}": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ]
+  }
+}
