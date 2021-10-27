@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "repository": "git@github.com:porser/porser-server.git",
   "license": "MIT",
+  "types": "lib/",
+  "directories": {
+    "lib": "src/",
+    "config": "config/"
+  },
+  "engines": {
+    "node": "^16.0.0",
+    "yarn": ">= 0.18.0"
+  },
   "contributors": [
     {
       "name": "Mostafa Shamsitabar",
@@ -15,11 +24,11 @@
     "build": "npm run build-ts && npm run lint",
     "debug": "npm run build && npm run watch-debug",
     "lint": "tsc --project tsconfig.json --noEmit && eslint \"src/**/*.{js,ts}\" --config .eslintrc.js --quiet --fix",
-    "serve-debug": "NODE_PATH=dist/ nodemon --inspect dist/index.js",
-    "serve": "NODE_PATH=dist/ NODE_ENV=production node dist/index.js",
+    "serve-debug": "NODE_PATH=lib/ nodemon --inspect lib/index.js",
+    "serve": "NODE_PATH=lib/ NODE_ENV=production node lib/index.js",
     "start": "npm run serve",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
-    "watch-node": "NODE_PATH=dist/ nodemon dist/index.js",
+    "watch-node": "NODE_PATH=lib/ nodemon lib/index.js",
     "watch-ts": "tsc -w",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
   },
