@@ -35,20 +35,18 @@ export class Users extends Service<User> {
     return this.app;
   }
 
-  create(data: User, params?: Params) {
+  async create(data: User, params?: Params) {
     // This is the information we want from the user signup data
-    const { email, password, githubId, name } = data;
+    const { email, password } = data;
 
     // Use the existing avatar image or return the Gravatar for the email
     const avatar = data.avatar || getGravatar(email);
 
-    // The complete user
-    const userData = {
+    const userData: User = {
       email,
-      name,
       password,
-      githubId,
-      avatar
+      avatar,
+      isVerified: false
     };
 
     // Call the original `create` method with existing `params` and new data

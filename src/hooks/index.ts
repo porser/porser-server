@@ -1,1 +1,1 @@
-export {};
+export { default as verifyEmail } from "./verify-email";

@@ -1,5 +1,6 @@
 import * as feathersAuthentication from "@feathersjs/authentication";
 import * as local from "@feathersjs/authentication-local";
+import verifyEmail from "hooks/verify-email";
 
 const { authenticate } = feathersAuthentication.hooks;
 const { hashPassword, protect } = local.hooks;
@@ -23,7 +24,10 @@ export default {
     ],
     find: [],
     get: [],
-    create: [],
+    create: [
+      // Send the account verification email to the client
+      verifyEmail()
+    ],
     update: [],
     patch: [],
     remove: []
