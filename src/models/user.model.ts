@@ -5,10 +5,15 @@ import type { Application } from "types.d";
 export interface User {
   _id?: string;
   email: string;
-  password: string;
+  password?: string;
   name?: string;
   avatar?: string;
   githubId?: string;
+  isVerified?: boolean;
+  verifyToken?: string;
+  resetToken?: string;
+  verifyExpires?: Date;
+  resetExpires?: Date;
 }
 
 const createUserModel = (app: Application) => {
