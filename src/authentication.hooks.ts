@@ -1,3 +1,5 @@
+import issueRefreshToken from "hooks/issue-refresh-token";
+
 export default {
   before: {
     all: [],
@@ -13,7 +15,7 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [issueRefreshToken()],
     update: [],
     patch: [],
     remove: []
