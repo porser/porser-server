@@ -1,7 +1,9 @@
 import * as feathersAuthentication from "@feathersjs/authentication";
-import refreshAccessToken from "hooks/refresh-access-token";
-import removeRefreshToken from "hooks/remove-refresh-token";
-import revokeRefreshToken from "hooks/revoke-refresh-token";
+import {
+  refreshAccessToken,
+  removeRefreshToken,
+  revokeRefreshToken
+} from "hooks";
 
 const { authenticate } = feathersAuthentication.hooks;
 
@@ -23,7 +25,7 @@ export default {
     create: [],
     update: [],
     patch: [],
-    remove: [removeRefreshToken()]
+    remove: []
   },
 
   error: {

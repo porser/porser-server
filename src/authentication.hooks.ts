@@ -1,4 +1,4 @@
-import issueRefreshToken from "hooks/issue-refresh-token";
+import { issueRefreshToken } from "hooks";
 
 export default {
   before: {

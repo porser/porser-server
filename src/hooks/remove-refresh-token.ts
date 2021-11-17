@@ -5,7 +5,7 @@ import {
   loadConfig,
   lookupRefreshTokenId
 } from "services/refresh-tokens/helpers";
-import type { Application, ServiceTypes } from "types";
+import type { Application } from "types";
 import { logger } from "utils";
 
 export default (): Hook => {
@@ -13,31 +13,10 @@ export default (): Hook => {
     const app = <Application>context.app;
     const config = loadConfig(app);
 
-    const { userEntityId, authService } = config;
-
-    if (context.type === "after") {
-      logger.debug("Logout user after delete refresh token", context.params);
-
-      // Must reset the query or won't be able to find user id
-      context.params.query = {};
-
-      const authentication = <ServiceTypes["authentication"]>(
-        app.service(authService)
-      );
-
-      const user = await authentication.remove(null, context.params);
-
-      logger.debug(
-        "Logout user after delete refresh token",
-        user,
-        context.result
-      );
-
-      return context;
-    }
+    const { userEntityId } = config;
 
     const query = context.params.query;
-    const user = <UserEntity | undefined>context.params;
+    const user = <UserEntity | undefined>context.params.user;
 
     logger.debug("Logout before hook, query and params", query, user);
 
