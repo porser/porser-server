@@ -1,6 +1,6 @@
 import errors from "@feathersjs/errors";
 import type { NullableId } from "@feathersjs/feathers";
-import type { User } from "models/user.model";
+import type { UserEntity } from "models/user.model";
 import type { Application } from "types.d";
 import { generateToken, getUserData, sendEmail } from "utils/service-utilities";
 
@@ -8,7 +8,7 @@ const DELAY = 1000 * 60 * 60 * 24 * 5; // 5 days
 
 export const resendVerification =
   (app: Application) =>
-  async (email: User["email"]): Promise<Partial<User>> => {
+  async (email: UserEntity["email"]): Promise<Partial<UserEntity>> => {
     if (!email) {
       throw new errors.BadRequest("email is missing.");
     }
@@ -21,13 +21,13 @@ export const resendVerification =
     const user = getUserData(users, ["isNotVerified"]);
 
     const u = (await usersService.patch(
-      <NullableId>user[<keyof User>usersServiceIdName],
+      <NullableId>user[<keyof UserEntity>usersServiceIdName],
       {
         isVerified: false,
         verifyExpires: new Date(Date.now() + DELAY),
         verifyToken: await generateToken()
       }
-    )) as User;
+    )) as UserEntity;
 
     await sendEmail({
       from: "Porser <no-reply@porser.io>",
@@ -41,7 +41,9 @@ export const resendVerification =
 
 export const verify =
   (app: Application) =>
-  async (token: NonNullable<User["verifyToken"]>): Promise<Partial<User>> => {
+  async (
+    token: NonNullable<UserEntity["verifyToken"]>
+  ): Promise<Partial<UserEntity>> => {
     if (!token) {
       throw new errors.BadRequest("token is missing.");
     }
@@ -54,13 +56,13 @@ export const verify =
     const user = getUserData(users, ["isNotVerified", "verifyNotExpired"]);
 
     const u = (await usersService.patch(
-      <NullableId>user[<keyof User>usersServiceIdName],
+      <NullableId>user[<keyof UserEntity>usersServiceIdName],
       {
         isVerified: true,
         verifyToken: undefined,
         verifyExpires: undefined
       }
-    )) as User;
+    )) as UserEntity;
 
     return u;
   };

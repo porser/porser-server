@@ -1,6 +1,6 @@
 import errors from "@feathersjs/errors";
 import type { NullableId, Paginated } from "@feathersjs/feathers";
-import type { User } from "models/user.model";
+import type { UserEntity } from "models/user.model";
 import type { Application } from "types.d";
 import {
   checkAgainstUser,
@@ -15,7 +15,7 @@ const RESET_DELAY = 1000 * 60 * 60 * 2; // 2 hours
 
 export const sendResetPwd =
   (app: Application) =>
-  async (email: User["email"]): Promise<Partial<User>> => {
+  async (email: UserEntity["email"]): Promise<Partial<UserEntity>> => {
     if (!email) {
       throw new errors.BadRequest("email is missing.");
     }
@@ -48,7 +48,7 @@ export const sendResetPwd =
       ...user,
       resetExpires: new Date(Date.now() + RESET_DELAY),
       resetToken: `${<string>(
-        user[<keyof User>usersServiceIdName]
+        user[<keyof UserEntity>usersServiceIdName]
       )}___${await generateToken()}`
     };
 
@@ -60,12 +60,12 @@ export const sendResetPwd =
     });
 
     const u2 = (await usersService.patch(
-      <NullableId>u1[<keyof User>usersServiceIdName],
+      <NullableId>u1[<keyof UserEntity>usersServiceIdName],
       {
         resetExpires: u1.resetExpires,
         resetToken: u1.resetToken
       }
-    )) as User;
+    )) as UserEntity;
 
     return u2;
   };
@@ -73,9 +73,9 @@ export const sendResetPwd =
 export const resetPwd =
   (app: Application) =>
   async (
-    password: NonNullable<User["password"]>,
-    token: NonNullable<User["resetToken"]>
-  ): Promise<Partial<User>> => {
+    password: NonNullable<UserEntity["password"]>,
+    token: NonNullable<UserEntity["resetToken"]>
+  ): Promise<Partial<UserEntity>> => {
     if (!password) {
       throw new errors.BadRequest("password is missing.");
     }
@@ -87,7 +87,7 @@ export const resetPwd =
     const usersService = app.service("users");
     const usersServiceIdName = usersService.id as string;
 
-    let user: User | Paginated<User>;
+    let user: UserEntity | Paginated<UserEntity>;
 
     if (token) {
       user = await usersService.get(constructIdFromToken(token));
@@ -103,7 +103,7 @@ export const resetPwd =
 
     if (token !== user.resetToken) {
       await usersService.patch(
-        <NullableId>user[<keyof User>usersServiceIdName],
+        <NullableId>user[<keyof UserEntity>usersServiceIdName],
         { resetToken: undefined, resetExpires: undefined }
       );
 
@@ -113,13 +113,13 @@ export const resetPwd =
     }
 
     const u = (await usersService.patch(
-      <NullableId>user[<keyof User>usersServiceIdName],
+      <NullableId>user[<keyof UserEntity>usersServiceIdName],
       {
         password,
         resetExpires: undefined,
         resetToken: undefined
       }
-    )) as User;
+    )) as UserEntity;
 
     return u;
   };
@@ -127,10 +127,10 @@ export const resetPwd =
 export const changePwd =
   (app: Application) =>
   async (
-    email: User["email"],
-    oldPassword: NonNullable<User["password"]>,
-    newPassword: NonNullable<User["password"]>
-  ): Promise<Partial<User>> => {
+    email: UserEntity["email"],
+    oldPassword: NonNullable<UserEntity["password"]>,
+    newPassword: NonNullable<UserEntity["password"]>
+  ): Promise<Partial<UserEntity>> => {
     if (!email) {
       throw new errors.BadRequest("email is missing.");
     }
@@ -159,11 +159,11 @@ export const changePwd =
     }
 
     const u = (await usersService.patch(
-      <NullableId>user[<keyof User>usersServiceIdName],
+      <NullableId>user[<keyof UserEntity>usersServiceIdName],
       {
         password: newPassword
       }
-    )) as User;
+    )) as UserEntity;
 
     return u;
   };

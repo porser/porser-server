@@ -1,8 +1,8 @@
 import { Hook, HookContext } from "@feathersjs/feathers";
-import { User } from "models/user.model";
+import { UserEntity } from "models/user.model";
 import { Application } from "types.d";
 
-type ContextResult = Partial<User> & { email: User["email"] };
+type ContextResult = Partial<UserEntity> & { email: UserEntity["email"] };
 
 export default (): Hook => {
   return async (context: HookContext): Promise<HookContext> => {

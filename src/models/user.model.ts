@@ -2,7 +2,7 @@ import NeDB from "nedb";
 import path from "path";
 import type { Application } from "types.d";
 
-export interface User {
+export interface UserEntity {
   _id?: string;
   email: string;
   password?: string;
@@ -19,7 +19,7 @@ export interface User {
 const createUserModel = (app: Application) => {
   const dbPath = app.get("nedb") as string;
 
-  const Model = new NeDB<User>({
+  const Model = new NeDB<UserEntity>({
     filename: path.join(dbPath, "users.db"),
     autoload: true
   });

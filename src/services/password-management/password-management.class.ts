@@ -1,6 +1,6 @@
 import errors from "@feathersjs/errors";
 import type { Paginated, ServiceMethods } from "@feathersjs/feathers";
-import type { User } from "models/user.model";
+import type { UserEntity } from "models/user.model";
 import type { Application } from "types.d";
 import { changePwd, resetPwd, sendResetPwd } from "./helpers";
 
@@ -12,7 +12,7 @@ type Action =
   | {
       type: "CHANGE_PASSWORD";
       payload: {
-        email: User["email"];
+        email: UserEntity["email"];
         oldPassword: string;
         newPassword: string;
       };
@@ -20,7 +20,7 @@ type Action =
   | {
       type: "SEND_RESET_PASSWORD";
       payload: {
-        email: User["email"];
+        email: UserEntity["email"];
       };
     };
 
@@ -31,7 +31,7 @@ export class PasswordManagement implements ServiceMethods<unknown> {
     this.app = app;
   }
 
-  async create(data: Action): Promise<Partial<User>> {
+  async create(data: Action): Promise<Partial<UserEntity>> {
     switch (data.type) {
       case "SEND_RESET_PASSWORD":
         try {

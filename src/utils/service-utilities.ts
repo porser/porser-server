@@ -2,10 +2,10 @@ import errors from "@feathersjs/errors";
 import type { Paginated } from "@feathersjs/feathers";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import type { UserEntity } from "models/user.model";
 import nodemailer, { Transporter } from "nodemailer";
-import type { User } from "models/user.model";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
 import type { Options as MailOptions } from "nodemailer/lib/mailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 type UserChecks =
   | "isNotVerified"
@@ -27,7 +27,7 @@ export const comparePasswords = (
   });
 };
 
-export const checkAgainstUser = (user: User, checks: UserChecks[]) => {
+export const checkAgainstUser = (user: UserEntity, checks: UserChecks[]) => {
   if (checks.includes("isNotVerified") && user.isVerified) {
     throw new errors.BadRequest("User is already verified.");
   }
@@ -54,7 +54,7 @@ export const checkAgainstUser = (user: User, checks: UserChecks[]) => {
 };
 
 export const getUserData = (
-  users: User[] | Paginated<User>,
+  users: UserEntity[] | Paginated<UserEntity>,
   checks: UserChecks[] = []
 ) => {
   if (Array.isArray(users) ? users.length === 0 : users.total === 0) {

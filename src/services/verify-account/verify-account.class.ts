@@ -1,6 +1,6 @@
 import errors from "@feathersjs/errors";
 import type { Paginated, ServiceMethods } from "@feathersjs/feathers";
-import type { User } from "models/user.model";
+import type { UserEntity } from "models/user.model";
 import type { Application } from "types.d";
 import { resendVerification, verify } from "./helpers";
 
@@ -11,7 +11,7 @@ type Action =
     }
   | {
       type: "RESEND_VERIFICATION";
-      payload: { email: User["email"] };
+      payload: { email: UserEntity["email"] };
     };
 
 export class VerifyAccount implements ServiceMethods<unknown> {
@@ -21,7 +21,7 @@ export class VerifyAccount implements ServiceMethods<unknown> {
     this.app = app;
   }
 
-  async create(data: Action): Promise<Partial<User>> {
+  async create(data: Action): Promise<Partial<UserEntity>> {
     switch (data.type) {
       case "RESEND_VERIFICATION":
         try {

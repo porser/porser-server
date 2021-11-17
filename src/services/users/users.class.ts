@@ -1,7 +1,7 @@
 import type { Params } from "@feathersjs/feathers";
 import crypto from "crypto";
 import { NedbServiceOptions, Service } from "feathers-nedb";
-import type { User } from "models/user.model";
+import type { UserEntity } from "models/user.model";
 import type { Application } from "types.d";
 
 // The Gravatar image service
@@ -22,7 +22,7 @@ const getGravatar = (email: string) => {
   return `${gravatarUrl}/${hash}?${query}`;
 };
 
-export class Users extends Service<User> {
+export class Users extends Service<UserEntity> {
   private app: Application;
 
   constructor(options: Partial<NedbServiceOptions>, app: Application) {
@@ -35,14 +35,14 @@ export class Users extends Service<User> {
     return this.app;
   }
 
-  async create(data: User, params?: Params) {
+  async create(data: UserEntity, params?: Params) {
     // This is the information we want from the user signup data
     const { email, password } = data;
 
     // Use the existing avatar image or return the Gravatar for the email
     const avatar = data.avatar || getGravatar(email);
 
-    const userData: User = {
+    const userData: UserEntity = {
       email,
       password,
       avatar,
