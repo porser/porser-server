@@ -10,7 +10,6 @@ import { logger } from "utils";
 
 interface Data {
   refreshToken: string;
-  userId: string;
 }
 
 export default (): Hook => {
