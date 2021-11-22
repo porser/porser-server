@@ -15,7 +15,7 @@ interface Data {
 export default (): Hook => {
   return async (context: HookContext): Promise<HookContext> => {
     // For internal calls, simply return the context
-    if (context.params.provider) return context;
+    if (!context.params.provider) return context;
 
     const app = <Application>context.app;
     const data = <Data>context.data;
@@ -25,7 +25,7 @@ export default (): Hook => {
     const { userEntityId } = config;
     const user = <UserEntity | undefined>context.params.user;
 
-    logger.debug("Revoke refresh-token for user", user);
+    logger.debug(`Revoke refresh-token for user: ${user as unknown as string}`);
 
     if (!user) throw new NotAuthenticated("User is not authenticated");
     if (!(<string | undefined>user[<keyof UserEntity>userEntityId]))
@@ -41,7 +41,9 @@ export default (): Hook => {
       refreshToken: data.refreshToken
     });
 
-    logger.debug("Find existing refresh token result", tokenId);
+    logger.debug(
+      `Find existing refresh token result: ${tokenId as unknown as string}`
+    );
 
     if (!tokenId) throw new NotAuthenticated("No refresh token");
 

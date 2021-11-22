@@ -19,7 +19,6 @@ interface Data {
   deviceId: RefreshTokenEntity["deviceId"];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default (): Hook => {
   return async (context: HookContext): Promise<HookContext> => {
     const data = <Data>context.data;
@@ -58,7 +57,7 @@ export default (): Hook => {
 
     const { token } = await lookupRefreshToken(app, config, query);
 
-    logger.debug(`existing token`, token);
+    logger.debug(`existing token: ${token as unknown as string}`);
 
     if (token) {
       result[entity] = token.refreshToken;
@@ -94,7 +93,7 @@ export default (): Hook => {
     );
 
     logger.debug(
-      `AccessToken and RefreshToken, ${result.accessToken}, ${tokenEntity.refreshToken}`
+      `AccessToken and RefreshToken: ${result.accessToken}, ${tokenEntity.refreshToken}`
     );
 
     result[entity] = refreshToken;

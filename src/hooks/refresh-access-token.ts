@@ -10,24 +10,20 @@ import { BadRequest, NotAuthenticated } from "@feathersjs/errors";
 interface Data {
   refreshToken: string;
   userId: string;
-  refreshAccessToken?: boolean;
   [k: string]: unknown;
 }
 
 export default (): Hook => {
   return async (context: HookContext): Promise<HookContext> => {
     // For internal calls, simply return the context
-    if (context.params.provider) return context;
+    if (!context.params.provider) return context;
+
     const data = <Data>context.data;
 
     ["refreshToken", "userId"].forEach(param => {
       if (param in data) return;
       throw new BadRequest(`Param ${param} is missing from request`);
     });
-
-    const refreshAccess = data.refreshAccessToken || false;
-
-    if (!refreshAccess) return context;
 
     const app = <Application>context.app;
     const config = loadConfig(app);
@@ -37,7 +33,7 @@ export default (): Hook => {
       refreshToken: data.refreshToken
     });
 
-    logger.debug("Find existing refresh token result", lookup.token);
+    logger.debug("Find existing refresh token result:", lookup.token);
 
     if (!lookup.token) throw new NotAuthenticated("No refresh token");
 
@@ -54,7 +50,7 @@ export default (): Hook => {
       sub: data.userId
     });
 
-    logger.debug(`Issued new access token ${accessToken}`);
+    logger.debug(`Issued new access token: ${accessToken}`);
 
     context.result = { accessToken };
 

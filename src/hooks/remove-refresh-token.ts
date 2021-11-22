@@ -10,6 +10,9 @@ import { logger } from "utils";
 
 export default (): Hook => {
   return async (context: HookContext): Promise<HookContext> => {
+    // For internal calls, simply return the context
+    if (!context.params.provider) return context;
+
     const app = <Application>context.app;
     const config = loadConfig(app);
 
@@ -32,7 +35,9 @@ export default (): Hook => {
       refreshToken: <string>query.refreshToken
     });
 
-    logger.debug("Find existing refresh token result", tokenId);
+    logger.debug(
+      `Find existing refresh token id result: ${tokenId as unknown as string}`
+    );
 
     if (!tokenId) throw new NotAuthenticated("No refresh token");
 
