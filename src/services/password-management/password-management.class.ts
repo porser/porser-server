@@ -2,9 +2,10 @@ import errors from "@feathersjs/errors";
 import type { Paginated, ServiceMethods } from "@feathersjs/feathers";
 import type { UserEntity } from "models/user.model";
 import type { Application } from "types.d";
-import { changePwd, resetPwd, sendResetPwd } from "./helpers";
+import { changePwd, resetPwd, sendResetPwd, verifyResetToken } from "./helpers";
 
 type Action =
+  | { type: "VERIFY_RESET_TOKEN"; payload: { token: string } }
   | {
       type: "RESET_PASSWORD";
       payload: { token: string; password: string };
@@ -36,6 +37,12 @@ export class PasswordManagement implements ServiceMethods<unknown> {
       case "SEND_RESET_PASSWORD":
         try {
           return await sendResetPwd(this.app)(data.payload.email);
+        } catch (err) {
+          return Promise.reject(err);
+        }
+      case "VERIFY_RESET_TOKEN":
+        try {
+          return await verifyResetToken(this.app)(data.payload.token);
         } catch (err) {
           return Promise.reject(err);
         }

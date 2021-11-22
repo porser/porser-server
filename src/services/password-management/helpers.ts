@@ -16,9 +16,8 @@ const RESET_DELAY = 1000 * 60 * 60 * 2; // 2 hours
 export const sendResetPwd =
   (app: Application) =>
   async (email: UserEntity["email"]): Promise<Partial<UserEntity>> => {
-    if (!email) {
-      throw new errors.BadRequest("email is missing.");
-    }
+    if (!email)
+      throw new errors.BadRequest("Email is missing.", { field: "email" });
 
     const usersService = app.service("users");
     const usersServiceIdName = usersService.id as string;
@@ -38,7 +37,7 @@ export const sendResetPwd =
         from: "Porser <no-reply@porser.io>",
         to: user.email,
         subject: "Reset Password",
-        text: user.resetToken
+        text: `http://localhost:3000/reset-password?token=${user.resetToken}`
       });
 
       return user;
@@ -56,7 +55,7 @@ export const sendResetPwd =
       from: "Porser <no-reply@porser.io>",
       to: u1.email,
       subject: "Reset Password",
-      text: u1.resetToken
+      text: `http://localhost:3000/reset-password?token=${u1.resetToken}`
     });
 
     const u2 = (await usersService.patch(
@@ -70,34 +69,23 @@ export const sendResetPwd =
     return u2;
   };
 
-export const resetPwd =
+export const verifyResetToken =
   (app: Application) =>
   async (
-    password: NonNullable<UserEntity["password"]>,
     token: NonNullable<UserEntity["resetToken"]>
   ): Promise<Partial<UserEntity>> => {
-    if (!password) {
-      throw new errors.BadRequest("password is missing.");
-    }
-
-    if (!token) {
-      throw new errors.BadRequest("token is missing.");
-    }
+    if (!token)
+      throw new errors.BadRequest("Token is missing", { field: "token" });
 
     const usersService = app.service("users");
     const usersServiceIdName = usersService.id as string;
 
-    let user: UserEntity | Paginated<UserEntity>;
+    const user: UserEntity | Paginated<UserEntity> = await usersService.get(
+      constructIdFromToken(token)
+    );
 
-    if (token) {
-      user = await usersService.get(constructIdFromToken(token));
-    } else {
-      throw new errors.BadRequest("resetToken is missing.");
-    }
-
-    if (!user) {
-      throw new errors.BadRequest("User not found.");
-    }
+    if (!user)
+      throw new errors.BadRequest("User not found", { reason: "userNotFound" });
 
     checkAgainstUser(user, ["resetNotExpired", "isVerified"]);
 
@@ -111,6 +99,23 @@ export const resetPwd =
         "Reset Token is incorrect. Try to get a new one."
       );
     }
+
+    return user;
+  };
+
+export const resetPwd =
+  (app: Application) =>
+  async (
+    password: NonNullable<UserEntity["password"]>,
+    token: NonNullable<UserEntity["resetToken"]>
+  ): Promise<Partial<UserEntity>> => {
+    if (!password)
+      throw new errors.BadRequest("Password is missing", { field: "password" });
+
+    const usersService = app.service("users");
+    const usersServiceIdName = usersService.id as string;
+
+    const user = await verifyResetToken(app)(token);
 
     const u = (await usersService.patch(
       <NullableId>user[<keyof UserEntity>usersServiceIdName],
