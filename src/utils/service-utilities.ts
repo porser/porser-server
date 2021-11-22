@@ -29,11 +29,15 @@ export const comparePasswords = (
 
 export const checkAgainstUser = (user: UserEntity, checks: UserChecks[]) => {
   if (checks.includes("isNotVerified") && user.isVerified) {
-    throw new errors.BadRequest("User is already verified.");
+    throw new errors.BadRequest("User is already verified", {
+      reason: "alreadyVerified"
+    });
   }
 
   if (checks.includes("isVerified") && !user.isVerified) {
-    throw new errors.BadRequest("User is not verified.");
+    throw new errors.BadRequest("User is not verified", {
+      reason: "notVerified"
+    });
   }
 
   if (
@@ -41,7 +45,10 @@ export const checkAgainstUser = (user: UserEntity, checks: UserChecks[]) => {
     user.verifyExpires &&
     user.verifyExpires.getTime() < Date.now()
   ) {
-    throw new errors.BadRequest("Verification token has expired.");
+    throw new errors.BadRequest("Verification token has expired", {
+      field: "token",
+      reason: "tokenExpired"
+    });
   }
 
   if (
@@ -49,7 +56,10 @@ export const checkAgainstUser = (user: UserEntity, checks: UserChecks[]) => {
     user.resetExpires &&
     user.resetExpires.getTime() < Date.now()
   ) {
-    throw new errors.BadRequest("Password reset token has expired.");
+    throw new errors.BadRequest("Password reset token has expired", {
+      field: "token",
+      reason: "tokenExpired"
+    });
   }
 };
 
@@ -58,13 +68,15 @@ export const getUserData = (
   checks: UserChecks[] = []
 ) => {
   if (Array.isArray(users) ? users.length === 0 : users.total === 0) {
-    throw new errors.BadRequest("User not found.");
+    throw new errors.BadRequest("User not found", { reason: "userNotFound" });
   }
 
   const _users = Array.isArray(users) ? users : users.data || [users];
 
   if (_users.length !== 1) {
-    throw new errors.BadRequest("More than 1 user selected.");
+    throw new errors.BadRequest("More than 1 user selected", {
+      reason: "multipleUserSelected"
+    });
   }
 
   const user = _users[0];
@@ -84,7 +96,9 @@ export const generateToken = (length = 15): Promise<string> => {
 
 export const constructIdFromToken = (token: string) => {
   if (!token.includes("___")) {
-    throw new errors.BadRequest("Token is not in the correct format.");
+    throw new errors.BadRequest("Token is not in the correct format", {
+      field: "token"
+    });
   }
 
   return token.slice(0, token.indexOf("___"));
@@ -114,6 +128,6 @@ export const sendEmail = async (mailOptions: MailOptions) => {
   try {
     await transporter.sendMail(mailOptions);
   } catch (err) {
-    throw new errors.GeneralError("Sending email failed.");
+    throw new errors.GeneralError("Sending email failed");
   }
 };
