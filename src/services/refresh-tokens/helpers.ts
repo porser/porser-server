@@ -40,7 +40,7 @@ export const loadConfig = (app: Application) => {
     throw new Error(`Invalid authentication service configuration`);
   }
 
-  logger.debug(`Authentication config`, authConf);
+  logger.debug("Authentication config:", authConf);
 
   const REFRESH_SECRET = process.env.REFRESH_SECRET;
 
@@ -62,7 +62,7 @@ export const loadConfig = (app: Application) => {
     userEntityId: <string>(<ServiceTypes["users"]>app.service(userService)).id
   };
 
-  logger.debug(`Final options for refresh token`, config);
+  logger.debug("Final options for refresh token:", config);
 
   if (!app.service(config.service)) {
     throw new Error(
@@ -97,7 +97,7 @@ export const lookupRefreshToken = async (
     app.service(service)
   )).find({ query });
 
-  logger.debug(`Refresh token lookup result: `, token);
+  logger.debug("Refresh token lookup result:", token);
 
   let data: RefreshTokenEntity | null = null;
 
@@ -137,7 +137,7 @@ export const lookupRefreshTokenId = async (
 
   if (!token) return null;
 
-  logger.debug("Find existing refresh token result", token);
+  logger.debug("Find existing refresh token result:", token);
 
   const service = <ServiceTypes["refresh-tokens"]>app.service(config.service);
   const tokenEntityId = <string>service.id;
@@ -150,7 +150,7 @@ export const lookupRefreshTokenId = async (
 
   if (tokenId == null) throw new Error("Invalid refresh token!");
 
-  logger.debug("refresh-token Id", tokenId);
+  logger.debug(`Refresh token id: ${tokenId}`);
 
   return tokenId;
 };
