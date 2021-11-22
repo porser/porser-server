@@ -6,7 +6,7 @@ import { resendVerification, verify } from "./helpers";
 
 type Action =
   | {
-      type: "VERIFY_REGISTRATION";
+      type: "VERIFY";
       payload: { token: string };
     }
   | {
@@ -29,7 +29,7 @@ export class VerifyAccount implements ServiceMethods<unknown> {
         } catch (err) {
           return Promise.reject(err);
         }
-      case "VERIFY_REGISTRATION":
+      case "VERIFY":
         try {
           return await verify(this.app)(data.payload.token);
         } catch (err) {

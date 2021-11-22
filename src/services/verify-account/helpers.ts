@@ -33,7 +33,9 @@ export const resendVerification =
       from: "Porser <no-reply@porser.io>",
       to: u.email,
       subject: "Account Verification",
-      text: u.verifyToken
+      text: `http://localhost:3000/verify-account?token=${
+        u.verifyToken as string
+      }`
     });
 
     return u;
@@ -44,9 +46,7 @@ export const verify =
   async (
     token: NonNullable<UserEntity["verifyToken"]>
   ): Promise<Partial<UserEntity>> => {
-    if (!token) {
-      throw new errors.BadRequest("token is missing.");
-    }
+    if (!token) throw new errors.BadRequest("token is missing.");
 
     const usersService = app.service("users");
     const usersServiceIdName = usersService.id as string;
