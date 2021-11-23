@@ -78,25 +78,23 @@ export const verifyResetToken =
       throw new errors.BadRequest("Token is missing", { field: "token" });
 
     const usersService = app.service("users");
-    const usersServiceIdName = usersService.id as string;
 
     const user: UserEntity | Paginated<UserEntity> = await usersService.get(
       constructIdFromToken(token)
     );
 
-    if (!user)
-      throw new errors.BadRequest("User not found", { reason: "userNotFound" });
+    if (!user) {
+      throw new errors.BadRequest("User not found", {
+        reason: "userNotFound"
+      });
+    }
 
     checkAgainstUser(user, ["resetNotExpired", "isVerified"]);
 
     if (token !== user.resetToken) {
-      await usersService.patch(
-        <NullableId>user[<keyof UserEntity>usersServiceIdName],
-        { resetToken: undefined, resetExpires: undefined }
-      );
-
       throw new errors.BadRequest(
-        "Reset Token is incorrect. Try to get a new one."
+        "Reset Token is incorrect. Try to get a new one.",
+        { reason: "incorrectToken" }
       );
     }
 
